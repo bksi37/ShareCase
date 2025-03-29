@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - ShareCase</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; display: flex; height: 100vh; }
+        .sidebar { width: 200px; background: #fff; padding: 20px; box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); }
+        .sidebar img { width: 100px; height: 100px; border-radius: 50%; }
+        .sidebar ul { list-style: none; padding: 0; }
+        .sidebar li { padding: 10px 0; }
+        .main { flex: 1; padding: 20px; text-align: center; }
+        .add-project { font-size: 50px; cursor: pointer; }
+        .upload-section { padding: 20px; }
+        .upload-section input, .upload-section textarea { width: 100%; padding: 10px; margin: 10px 0; }
+        .upload-section button { padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <img src="profile.jpg" alt="Profile Picture">
+        <h2>Your Name</h2>
+        <p>Year: Sophomore</p>
+        <ul>
+            <li><a href="project.html?id=0">Project 1</a></li>
+        </ul>
+        <p><a href="index.html">Home</a></p>
+    </aside>
+    <main class="main">
+        <div class="add-project" onclick="document.querySelector('.upload-section').style.display='block'">+</div>
+        <h2>Add New Project</h2>
+        <div class="upload-section" style="display: none;">
+            <form id="uploadForm" enctype="multipart/form-data">
+                <input type="text" name="title" placeholder="Project Title" required><br>
+                <textarea name="description" placeholder="Short description..." required></textarea><br>
+                <input type="file" name="file" accept="image/*,.obj,.pdf" required><br>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </main>
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.text();
+            alert(result);
+            e.target.reset();
+            document.querySelector('.upload-section').style.display = 'none';
+        });
+    </script>
+</body>
+</html>
