@@ -3,24 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShareCase</title>
+    <title>Dashboard - ShareCase</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; display: flex; flex-direction: column; height: 100vh; }
         header { display: flex; justify-content: space-between; align-items: center; padding: 10px; background-color: #fff; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); }
         .logo { font-size: 20px; font-weight: bold; }
         .search-bar input { padding: 5px; width: 300px; border: 1px solid #ccc; border-radius: 5px; }
         .user-menu button { background: none; border: none; font-size: 20px; cursor: pointer; margin-left: 10px; }
-        .container { display: flex; flex: 1; height: 100%; }
-        .sidebar { width: 180px; background: #fff; padding: 20px; box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); display: none; flex-direction: column; height: 100%; }
-        .sidebar h3 { margin-bottom: 10px; }
-        .sidebar ul { list-style: none; padding: 0; }
-        .sidebar li { padding: 10px 0; cursor: pointer; border-bottom: 1px solid #ddd; }
-        .projects { flex: 1; padding: 20px; width: 100%; }
+        .projects { padding: 20px; }
         .project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
         .project-card { background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); text-align: center; cursor: pointer; }
         .project-card img { width: 100%; height: auto; border-radius: 5px; }
-        .project-card h3 { margin: 10px 0; font-size: 18px; }
-        .category-button { background-color: #007bff; color: white; padding: 10px; border: none; cursor: pointer; font-size: 16px; margin: 10px; border-radius: 5px; }
+        .add-project { background-color: #007bff; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer; }
         nav a { margin: 0 10px; text-decoration: none; color: #007bff; }
     </style>
 </head>
@@ -34,27 +28,17 @@
             <button>🔔</button>
             <button>👤</button>
             <nav>
-                <a href="login.html">Login</a>
                 <a href="profile.html">Profile</a>
-                <a href="about.html">About</a>
+                <a href="settings.html">Settings</a>
+                <a href="index.html">Logout</a>
             </nav>
         </div>
     </header>
-    <button class="category-button" onclick="toggleSidebar()">Filter</button>
-    <div class="container">
-        <aside class="sidebar" id="sidebar">
-            <h3>Filter</h3>
-            <ul>
-                <li><input type="checkbox" id="course"><label for="course"> Course</label></li>
-                <li><input type="checkbox" id="year"><label for="year"> Year</label></li>
-                <li><input type="checkbox" id="personal"><label for="personal"> Personal</label></li>
-            </ul>
-        </aside>
-        <main class="projects">
-            <h2>Featured Projects</h2>
-            <div class="project-grid"></div>
-        </main>
-    </div>
+    <main class="projects">
+        <button class="add-project" onclick="window.location.href='profile.html'">Add Project</button>
+        <h2>Your Feed</h2>
+        <div class="project-grid"></div>
+    </main>
     <script>
         async function loadProjects() {
             const response = await fetch('/projects');
@@ -74,16 +58,6 @@
                 grid.appendChild(card);
             });
         }
-
-        function toggleSidebar() {
-            var sidebar = document.getElementById("sidebar");
-            if (sidebar.style.display === "none" || sidebar.style.display === "") {
-                sidebar.style.display = "flex";
-            } else {
-                sidebar.style.display = "none";
-            }
-        }
-
         window.onload = loadProjects;
     </script>
 </body>

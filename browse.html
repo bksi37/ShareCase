@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse - ShareCase</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; }
+        header { padding: 20px; background: #fff; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); }
+        .search-bar input { width: 100%; max-width: 500px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
+        .filters { padding: 20px; }
+        .project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; padding: 20px; }
+        .project-card { background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); text-align: center; cursor: pointer; }
+        .project-card img { width: 100%; height: auto; border-radius: 5px; }
+        nav a { margin: 0 10px; text-decoration: none; color: #007bff; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="search-bar">
+            <input type="text" placeholder="Search projects...">
+        </div>
+        <nav>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="profile.html">Profile</a>
+            <a href="index.html">Logout</a>
+        </nav>
+    </header>
+    <div class="filters">
+        <label><input type="checkbox"> Course</label>
+        <label><input type="checkbox"> Year</label>
+        <label><input type="checkbox"> Tags</label>
+    </div>
+    <div class="project-grid"></div>
+    <script>
+        async function loadProjects() {
+            const response = await fetch('/projects');
+            const projects = await response.json();
+            const grid = document.querySelector('.project-grid');
+            grid.innerHTML = '';
+            projects.forEach((project, index) => {
+                const card = document.createElement('div');
+                card.className = 'project-card';
+                card.innerHTML = `
+                    <img src="${project.file}" alt="${project.title}">
+                    <h3>${project.title}</h3>
+                    <p>${project.description}</p>
+                    <p>By: Your Name</p>
+                `;
+                card.onclick = () => window.location.href = `project.html?id=${index}`;
+                grid.appendChild(card);
+            });
+        }
+        window.onload = loadProjects;
+    </script>
+</body>
+</html>

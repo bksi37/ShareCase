@@ -15,6 +15,7 @@
         .upload-section { padding: 20px; }
         .upload-section input, .upload-section textarea { width: 100%; padding: 10px; margin: 10px 0; }
         .upload-section button { padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px; }
+        nav a { margin: 0 10px; text-decoration: none; color: #007bff; }
     </style>
 </head>
 <body>
@@ -22,10 +23,12 @@
         <img src="profile.jpg" alt="Profile Picture">
         <h2>Your Name</h2>
         <p>Year: Sophomore</p>
-        <ul>
-            <li><a href="project.html?id=0">Project 1</a></li>
-        </ul>
-        <p><a href="index.html">Home</a></p>
+        <ul id="project-list"></ul>
+        <nav>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="settings.html">Settings</a>
+            <a href="index.html">Logout</a>
+        </nav>
     </aside>
     <main class="main">
         <div class="add-project" onclick="document.querySelector('.upload-section').style.display='block'">+</div>
@@ -51,7 +54,21 @@
             alert(result);
             e.target.reset();
             document.querySelector('.upload-section').style.display = 'none';
+            loadUserProjects();
         });
+
+        async function loadUserProjects() {
+            const response = await fetch('/projects');
+            const projects = await response.json();
+            const list = document.getElementById('project-list');
+            list.innerHTML = '';
+            projects.forEach((project, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = `<a href="project.html?id=${index}">${project.title}</a>`;
+                list.appendChild(li);
+            });
+        }
+        window.onload = loadUserProjects;
     </script>
 </body>
 </html>

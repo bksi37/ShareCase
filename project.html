@@ -8,6 +8,8 @@
         body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4; }
         .project { max-width: 800px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); }
         .project img { max-width: 100%; }
+        .engagement { margin-top: 20px; }
+        nav a { margin: 0 10px; text-decoration: none; color: #007bff; }
     </style>
 </head>
 <body>
@@ -15,7 +17,19 @@
         <h1 id="title"></h1>
         <img id="image" src="" alt="Project Image">
         <p id="description"></p>
-        <p><a href="profile.html">Back to Profile</a> | <a href="index.html">Home</a></p>
+        <div class="engagement">
+            <p>Views: <span id="views"></span> | Likes: <span id="likes"></span> | Comments: <span id="comments"></span></p>
+            <button>Like</button>
+            <button>Share</button>
+        </div>
+        <div class="comments">
+            <h3>Comments</h3>
+            <p>No comments yet.</p>
+        </div>
+        <nav>
+            <a href="profile.html">Back to Profile</a>
+            <a href="dashboard.html">Dashboard</a>
+        </nav>
     </div>
     <script>
         async function loadProject() {
@@ -27,6 +41,9 @@
             document.getElementById('title').textContent = project.title;
             document.getElementById('image').src = project.file;
             document.getElementById('description').textContent = project.description;
+            document.getElementById('views').textContent = project.views || 0;
+            document.getElementById('likes').textContent = project.likes || 0;
+            document.getElementById('comments').textContent = project.comments || 0;
         }
         window.onload = loadProject;
     </script>
