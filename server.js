@@ -35,7 +35,8 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage }).fields([
     { name: 'image', maxCount: 1 },
-    { name: 'objFile', maxCount: 1 }
+    { name: 'objFile', maxCount: 1 },
+    { name: 'profilePic', maxCount: 1 }
 ]);
 
 app.use(express.static(__dirname));
@@ -57,7 +58,7 @@ app.post('/signup', async (req, res) => {
         return res.status(400).send('User already exists');
     }
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = { email, password: hashedPassword };
+    const user = { email, password: hashedPassword, name: 'Your Name', profilePic: '/uploads/default-profile.jpg' };
     users.push(user);
     fs.writeFileSync(usersFile, JSON.stringify(users, null, 2));
     req.session.user = user;
@@ -82,6 +83,58 @@ app.get('/logout', (req, res) => {
     res.redirect('/index.html');
 });
 
+// Profile update endpoint
+app.post('/update-profile', isAuthenticated, upload, (req, res) => {
+    const user = users.find(u => u.email === req.session.user.email);
+    if (req.body.name) user.name = req.body.name;
+    if (req.files.profilePic) user.profilePic = `/uploads/${req.files.profilePic[0].filename}`;
+    fs.writeFileSync(usersFile, JSON.stringify(users, null, 2));
+    req.session.user = user;
+    res.redirect('/profile');
+});
+
+// Get current user
+app.get('/current-user', isAuthenticated, (req, res) => {
+    res.json(req.session.user);
+});
+
+// Increment views
+app.post('/increment-views', (req, res) => {
+    const { id } = req.body;
+    if (projects[id]) {
+        projects[id].views = (projects[id].views || 0) + 1;
+        fs.writeFileSync(projectsFile, JSON.stringify(projects, null, 2));
+        res.json({ views: projects[id].views });
+    } else {
+        res.status(404).send('Project not found');
+    }
+});
+
+// Increment likes
+app.post('/increment-likes', isAuthenticated, (req, res) => {
+    const { id } = req.body;
+    if (projects[id]) {
+        projects[id].likes = (projects[id].likes || 0) + 1;
+        fs.writeFileSync(projectsFile, JSON.stringify(projects, null, 2));
+        res.json({ likes: projects[id].likes });
+    } else {
+        res.status(404).send('Project not found');
+    }
+});
+
+// Delete project
+app.post('/delete-project', isAuthenticated, (req, res) => {
+    const { id } = req.body;
+    const project = projects[id];
+    if (project && project.author === req.session.user.email) {
+        projects.splice(id, 1);
+        fs.writeFileSync(projectsFile, JSON.stringify(projects, null, 2));
+        res.send('Project deleted');
+    } else {
+        res.status(403).send('Unauthorized or project not found');
+    }
+});
+
 app.post('/upload', isAuthenticated, upload, (req, res) => {
     const project = {
         title: req.body.title,
@@ -98,7 +151,6 @@ app.post('/upload', isAuthenticated, upload, (req, res) => {
     };
     projects.push(project);
     fs.writeFileSync(projectsFile, JSON.stringify(projects, null, 2));
-    console.log('New project:', project);
     res.send('Project uploaded! Check the uploads folder.');
 });
 

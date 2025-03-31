@@ -20,7 +20,8 @@
         .project-container { padding: 20px; }
         .media-section { display: flex; justify-content: space-between; margin-bottom: 20px; }
         .media-section img { width: 48%; height: 400px; object-fit: cover; border-radius: 8px; }
-        #viewport { width: 48%; height: 400px; border: 1px solid #ddd; border-radius: 8px; }
+        #viewport { width: 48%; height: 400px; border: 1px solid #ddd; border-radius: 8px; display: none; }
+        .media-section.no-3d img { width: 100%; }
         .info-section { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); }
         .engagement { margin-top: 20px; }
         .engagement button { margin-right: 10px; }
@@ -30,12 +31,17 @@
 <body>
     <header class="d-flex justify-content-between align-items-center">
         <div class="logo">
-            <a href="index.html">ShareCase</a>
+            <a href="index.html"> W</a>
         </div>
-        <div class="search-bar">
+        <div class="search-bar position-relative">
             <input type="text" class="form-control" id="searchInput" placeholder="Search projects...">
+            <button class="btn position-absolute" style="right: 5px; top: 50%; transform: translateY(-50%);" onclick="toggleSidebar()"><i class="fas fa-search"></i></button>
         </div>
         <div class="user-menu">
+            <div class="d-flex align-items-center me-3">
+                <img id="headerProfilePic" src="/uploads/default-profile.jpg" alt="Profile Picture" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; margin-right: 10px;">
+                <span id="headerProfileName">Your Name</span>
+            </div>
             <button class="btn-icon" onclick="window.location.href='profile.html'"><i class="fas fa-user-circle"></i></button>
             <button class="btn-icon" onclick="window.location.href='settings.html'"><i class="fas fa-cog"></i></button>
             <nav>
@@ -45,7 +51,7 @@
         </div>
     </header>
     <div class="project-container">
-        <div class="media-section">
+        <div class="media-section" id="mediaSection">
             <img id="image" src="" alt="Project Image">
             <div id="viewport"></div>
         </div>
@@ -58,7 +64,7 @@
             <p><strong>Tags:</strong> <span id="tags"></span></p>
             <div class="engagement">
                 <p>Views: <span id="views"></span> | Likes: <span id="likes"></span> | Comments: <span id="comments"></span></p>
-                <button class="btn btn-primary">Like</button>
+                <button class="btn btn-primary" id="likeButton">Like</button>
                 <button class="btn btn-secondary">Share</button>
             </div>
             <div class="comments">
@@ -68,9 +74,28 @@
         </div>
     </div>
     <script>
+        async function loadUserProfileInHeader() {
+            try {
+                const response = await fetch('/current-user');
+                if (response.ok) {
+                    const user = await response.json();
+                    document.getElementById('headerProfileName').textContent = user.name;
+                    document.getElementById('headerProfilePic').src = user.profilePic || '/uploads/default-profile.jpg';
+                }
+            } catch (error) {
+                console.error('Error loading user profile:', error);
+            }
+        }
+
         async function loadProject() {
             const urlParams = new URLSearchParams(window.location.search);
             const id = urlParams.get('id');
+            // Increment views
+            await fetch('/increment-views', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id })
+            });
             const response = await fetch('/projects');
             const projects = await response.json();
             const project = projects[id];
@@ -86,10 +111,21 @@
             document.getElementById('comments').textContent = project.comments || 0;
 
             if (project.objFile) {
+                document.getElementById('viewport').style.display = 'block';
                 init3DViewer(project.objFile);
             } else {
-                document.getElementById('viewport').innerHTML = '<p>No 3D model available.</p>';
+                document.getElementById('mediaSection').classList.add('no W');
             }
+
+            document.getElementById('likeButton').addEventListener('click', async () => {
+                const response = await fetch('/increment-likes', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                });
+                const data = await response.json();
+                document.getElementById('likes').textContent = data.likes;
+            });
         }
 
         function init3DViewer(objUrl) {
@@ -116,11 +152,15 @@
                 animate();
             }, undefined, (error) => {
                 console.error('Error loading .obj file:', error);
-                document.getElementById('viewport').innerHTML = '<p>Error loading 3D model.</p>';
+                document.getElementById('viewport').style.display = 'none';
+                document.getElementById('mediaSection').classList.add('no-3d');
             });
         }
 
-        window.onload = loadProject;
+        window.onload = () => {
+            loadUserProfileInHeader();
+            loadProject();
+        };
     </script>
 </body>
 </html>

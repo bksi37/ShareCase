@@ -31,14 +31,19 @@
         <div class="logo">
             <a href="index.html">ShareCase</a>
         </div>
-        <div class="search-bar">
+        <div class="search-bar position-relative">
             <input type="text" class="form-control" id="searchInput" placeholder="Search projects...">
+            <button class="btn position-absolute" style="right: 5px; top: 50%; transform: translateY(-50%);" onclick="toggleSidebar()"><i class="fas fa-search"></i></button>
         </div>
         <div class="user-menu">
+            <div class="d-flex align-items-center me-3">
+                <img id="headerProfilePic" src="/uploads/default-profile.jpg" alt="Profile Picture" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; margin-right: 10px;">
+                <span id="headerProfileName">Your Name</span>
+            </div>
             <button class="btn-icon" onclick="window.location.href='profile.html'"><i class="fas fa-user-circle"></i></button>
             <button class="btn-icon" onclick="window.location.href='settings.html'"><i class="fas fa-cog"></i></button>
             <nav>
-                <a href="index.html" class="ms-2">Logout</a>
+                <a href="/logout" class="ms-2">Logout</a>
             </nav>
         </div>
     </header>
@@ -48,6 +53,19 @@
         <div class="project-grid"></div>
     </main>
     <script>
+        async function loadUserProfileInHeader() {
+            try {
+                const response = await fetch('/current-user');
+                if (response.ok) {
+                    const user = await response.json();
+                    document.getElementById('headerProfileName').textContent = user.name;
+                    document.getElementById('headerProfilePic').src = user.profilePic || '/uploads/default-profile.jpg';
+                }
+            } catch (error) {
+                console.error('Error loading user profile:', error);
+            }
+        }
+
         async function loadProjects(query = '') {
             const url = query ? `/search?q=${encodeURIComponent(query)}` : '/projects';
             const response = await fetch(url);
@@ -58,7 +76,7 @@
                 const card = document.createElement('div');
                 card.className = 'project-card';
                 card.innerHTML = `
-                    <img src="${project.image}" alt="${project.title}">
+                    <img src="${project.image || '/uploads/placeholder.jpg'}" alt="${project.title}" onerror="this.src='/uploads/placeholder.jpg'">
                     <div class="card-body">
                         <h5 class="card-title">${project.title}</h5>
                     </div>
@@ -76,7 +94,10 @@
             loadProjects(e.target.value);
         });
 
-        window.onload = () => loadProjects();
+        window.onload = () => {
+            loadUserProfileInHeader();
+            loadProjects();
+        };
     </script>
 </body>
 </html>
