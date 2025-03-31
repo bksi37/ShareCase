@@ -79,8 +79,23 @@
                 <div class="upload-section" style="display: none;">
                     <form id="uploadForm" enctype="multipart/form-data">
                         <input type="text" name="title" class="form-control mb-2" placeholder="Project Title" required>
-                        <textarea name="description" class="form-control mb-2" placeholder="Short description..." required></textarea>
-                        <input type="file" name="file" class="form-control mb-2" accept="image/*,.obj,.pdf" required>
+                        <textarea name="description" class="form-control mb-2" placeholder="Project Description" required></textarea>
+                        <textarea name="problemStatement" class="form-control mb-2" placeholder="Problem Statement" required></textarea>
+                        <input type="text" name="collaborators" class="form-control mb-2" placeholder="Collaborators (comma-separated emails)">
+                        <input type="text" name="tags" class="form-control mb-2" placeholder="Tags (e.g., MECH101, Robotics, Personal)" list="course-tags">
+                        <datalist id="course-tags">
+                            <option value="MECH101">Mechanical Engineering 101</option>
+                            <option value="MECH201">Mechanical Engineering 201</option>
+                            <option value="ELEC101">Electrical Engineering 101</option>
+                            <option value="CIVIL101">Civil Engineering 101</option>
+                            <option value="COMP101">Computer Engineering 101</option>
+                            <option value="Robotics">Robotics</option>
+                            <option value="Thermodynamics">Thermodynamics</option>
+                            <option value="FluidMechanics">Fluid Mechanics</option>
+                            <option value="Personal">Personal</option>
+                        </datalist>
+                        <input type="file" name="image" class="form-control mb-2" accept="image/*" required>
+                        <input type="file" name="objFile" class="form-control mb-2" accept=".obj">
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
                 </div>
@@ -107,28 +122,24 @@
         async function loadUserProjects() {
             const response = await fetch('/projects');
             const projects = await response.json();
-            // Sidebar project list
             const list = document.getElementById('project-list');
-            list.innerHTML = '';
-            // Work tab project grid
             const workGrid = document.getElementById('work-projects');
+            list.innerHTML = '';
             workGrid.innerHTML = '';
             projects.forEach((project, index) => {
-                // Sidebar
                 const li = document.createElement('li');
                 li.innerHTML = `<a href="project.html?id=${index}">${project.title}</a>`;
                 list.appendChild(li);
-                // Work tab
                 const card = document.createElement('div');
                 card.className = 'project-card';
                 card.innerHTML = `
-                    <img src="${project.file}" alt="${project.title}">
+                    <img src="${project.image}" alt="${project.title}">
                     <div class="card-body">
                         <h5 class="card-title">${project.title}</h5>
                     </div>
                     <div class="card-footer">
                         <span>Likes: ${project.likes || 0} | Views: ${project.views || 0}</span>
-                        <div>By: Your Name</div>
+                        <div>By: ${project.author}</div>
                     </div>
                 `;
                 card.onclick = () => window.location.href = `project.html?id=${index}`;
@@ -136,7 +147,6 @@
             });
         }
 
-        // Tab switching
         document.getElementById('work-tab').addEventListener('click', (e) => {
             e.preventDefault();
             document.getElementById('work-tab').classList.add('active');
