@@ -1,1 +1,45 @@
-[]
+[
+  {
+    "title": "Mag hanger",
+    "description": "A magnetic hanger made with 3d Printing techniques and fusion",
+    "problemStatement": "Over the years, hanging jerseys on walls with pins where the norm, well not anymore",
+    "collaborators": [],
+    "tags": [
+      "Personal"
+    ],
+    "image": "/uploads/1743548326286.png",
+    "objFile": null,
+    "author": "brakwasi619@gmail.com",
+    "views": 4,
+    "likes": 41,
+    "comments": 0
+  },
+  {
+    "title": "Dolphin",
+    "description": "A kids toy",
+    "problemStatement": "Tased with creating a kids toy in my first year engineering class",
+    "collaborators": [],
+    "tags": [
+      "MECH101"
+    ],
+    "image": "/uploads/1743549570233.png",
+    "objFile": null,
+    "author": "brakwasi619@gmail.com",
+    "views": 0,
+    "likes": 0,
+    "comments": 0
+  },
+  {
+    "title": "Hanger v2",
+    "description": "An upgrade",
+    "problemStatement": "An upgrade",
+    "collaborators": [],
+    "tags": [],
+    "image": "/uploads/1743549608253.png",
+    "objFile": null,
+    "author": "brakwasi619@gmail.com",
+    "views": 0,
+    "likes": 0,
+    "comments": 0
+  }
+]
