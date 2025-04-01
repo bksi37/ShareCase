@@ -13,9 +13,17 @@
         .logo a { text-decoration: none; color: #000; }
         .search-bar { flex-grow: 1; max-width: 500px; margin: 0 20px; }
         .user-menu { display: flex; align-items: center; }
-        .user-menu button { background: none; border: none; font-size: 20px; margin-left: 10px; }
-        .user-menu .btn-icon { font-size: 24px; color: #555; transition: color 0.2s; }
-        .user-menu .btn-icon:hover { color: #007bff; }
+
+        /* Profile container and dropdown styles */
+        .user-menu .profile-container { display: flex; align-items: center; cursor: pointer; position: relative; }
+        .user-menu img { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; margin-right: 10px; }
+        .user-menu .dropdown-menu { display: none; position: absolute; top: 100%; right: 0; background: #fff; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); border-radius: 4px; padding: 10px 0; z-index: 1000; }
+        .user-menu .dropdown-menu a { display: block; padding: 8px 20px; color: #333; text-decoration: none; }
+        .user-menu .dropdown-menu a:hover { background: #f0f0f0; }
+        .user-menu .profile-container:hover .dropdown-menu { display: block; }
+        /* Invisible bridge to prevent hover gap */
+        .user-menu .profile-container::after { content: ''; position: absolute; top: 100%; left: 0; width: 100%; height: 10px; background: transparent; }
+
         .container { display: flex; min-height: calc(100vh - 70px); }
         .sidebar { width: 200px; background: #fff; padding: 20px; box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); display: none; flex-direction: column; position: fixed; left: 0; top: 70px; bottom: 0; }
         .sidebar h3 { margin-bottom: 10px; }
@@ -48,16 +56,16 @@
             <button class="btn position-absolute" style="right: 5px; top: 50%; transform: translateY(-50%);" onclick="toggleSidebar()"><i class="fas fa-filter"></i></button>
         </div>
         <div class="user-menu">
-            <div class="d-flex align-items-center me-3">
-                <img id="headerProfilePic" src="/uploads/default-profile.jpg" alt="Profile Picture" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; margin-right: 10px;">
+            <div class="profile-container">
+                <img id="headerProfilePic" src="/uploads/default-profile.jpg" alt="Profile Picture">
                 <span id="headerProfileName">Your Name</span>
+                <div class="dropdown-menu">
+                    <a href="profile.html">Profile</a>
+                    <a href="settings.html">Settings</a>
+                    <a id="authLink" href="login.html">Login</a>
+                    <a href="about.html">About</a>
+                </div>
             </div>
-            <button class="btn-icon" onclick="window.location.href='profile.html'"><i class="fas fa-user-circle"></i></button>
-            <button class="btn-icon" onclick="window.location.href='settings.html'"><i class="fas fa-cog"></i></button>
-            <nav>
-                <a href="login.html" class="ms-2">Login</a>
-                <a href="about.html" class="ms-2">About</a>
-            </nav>
         </div>
     </header>
     <div class="container">
@@ -82,9 +90,19 @@
                     const user = await response.json();
                     document.getElementById('headerProfileName').textContent = user.name;
                     document.getElementById('headerProfilePic').src = user.profilePic || '/uploads/default-profile.jpg';
+                    const authLink = document.getElementById('authLink');
+                    authLink.textContent = 'Logout';
+                    authLink.href = '/logout';
+                } else {
+                    const authLink = document.getElementById('authLink');
+                    authLink.textContent = 'Login';
+                    authLink.href = 'login.html';
                 }
             } catch (error) {
                 console.error('Error loading user profile:', error);
+                const authLink = document.getElementById('authLink');
+                authLink.textContent = 'Login';
+                authLink.href = 'login.html';
             }
         }
 
