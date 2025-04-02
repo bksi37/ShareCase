@@ -4,5 +4,11 @@
     "password": "$2b$10$YEVXit.mmLMdZaK7cVKJZuLFk5MW6LZSTSWTc9cmXk2svq.9trZte",
     "name": "Gideon",
     "profilePic": "/uploads/1743548215305.jpg"
+  },
+  {
+    "email": "gideonokutu7@gmail.com",
+    "password": "$2b$10$yKY1y7N76W5ROe/rL3EDu.uEMzSjmsJrNAo9U9TzYC3Rx/57hDhDO",
+    "name": "Okutu",
+    "profilePic": "/uploads/1743550635891.jpg"
   }
 ]
